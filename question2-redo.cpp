@@ -100,6 +100,82 @@ T Stack<T>::top() {
     }
 }
 
+
+template <class T>
+
+class Queue{
+    private:
+      T* data;
+      int front;
+      int rear;
+      int capacity;
+      int currentSize;
+
+
+     public:
+      Queue(int cap):capacity(cap) , front(0) ,rear(0) , currentSize(0){
+        data = new T[cap];
+      }
+
+
+      ~Queue() {
+        delete[] data;
+
+      }
+
+      bool full() {
+        return currentSize == capacity;
+      }
+
+      bool empty(){
+        return currentSize == 0;
+      }
+
+      int getSize(){
+        return currentSize;
+      }
+
+      bool enqueue(T v){
+        if(!full()){
+          data[rear] = v;
+          rear = (rear + 1) % capacity;
+          currentSize++;
+          return true;
+        }  else {
+          cout << "Queue is full!" << endl;
+          cout << "Total items in the queue: " << currentSize << endl;
+          return false;
+        }
+      }
+
+      bool dequeue(){
+       if(!empty()){
+        front = (front + 1) % capacity;
+        currentSize--;
+        return true;
+       } else {
+        cout << "Queue is empty!" << endl;
+        return false;
+       }
+      }
+
+      T peek(){
+        if(!empty()){
+          return data[front];
+        } else {
+          throw runtime_error("Queue is empty!");
+        }
+      }
+
+
+      
+
+
+
+
+
+};
+
 // --------------------- Product Class ---------------------
 
 
@@ -134,6 +210,7 @@ int main() {
 
     int choice;
     Stack<Product> stack(5);
+    Queue<Product> queue(5);
     
 
     while (true){
@@ -174,29 +251,58 @@ int main() {
 
       } else {
          Product lastItem = stack.top();
+         stack.pop();
          cout << "Processed Item: " << endl;
          lastItem.display();
+
+         if(queue.enqueue(lastItem)){
+            cout << "Item " << lastItem.getItem() << " added to the shipping queue!" << endl;
+            cout << "total items in the shipping queue: " << queue.getSize() << endl;
+         } else if (queue.full()){
+           cout << "Shipping queue is full! Cannot add more items to ship. " << endl;
+           cout << "Total items in the shipping queue: " << queue.getSize() << endl;
+          
+         }
       }
       break;
 
 
     case 3:
-      if(stack.empty()){
-        cout << "There are no items to ship!" << endl;
-      } else {
-         Product shippedItem = stack.top();
-         cout << "=========================================" << endl;
-         cout << "Shipped Item: " << shippedItem.getItem() << endl;
-         stack.pop();
-         cout << "=========================================" << endl;
-         cout << "Shipped Item: " << endl;
-         shippedItem.display();
-      }
+     if(queue.empty()){
+      cout << "There are no items to ship!" << endl;
+     } else {
+       Product ShippedItem = queue.peek();
+       queue.dequeue();
+       cout << "Shipped Item: " << ShippedItem.getItem() << endl;
+       cout << "Total items left in the shipping queue: " << queue.getSize() << endl;
+     }
     break;
     case 4:
       if(stack.empty()){
         cout << "There are no incoming items!" << endl;
-      } 
+      } else {
+         Product lastIncomingItem = stack.top();
+         cout << "Last Incoming Item: " << endl;
+         lastIncomingItem.display();
+      }
+      break;
+
+    case 5:
+      if(queue.empty()){
+        cout << "There are no items to ship!" << endl;
+
+      } else {
+         Product nextShipment = queue.peek();
+         cout << "Next Shipment Item: " << nextShipment.getItem() << endl;
+
+      }
+      break;
+
+    case 6:
+      cout << "Thank you for using the Inventory System. Goodbye!" << endl;
+      return 0;
+      break;
+      
     default:
       break;
     }
