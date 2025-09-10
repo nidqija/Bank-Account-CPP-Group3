@@ -1,10 +1,7 @@
 #include <iostream>
 #include <string>
 
-
 using namespace std;
-
-
 class BankAccount {
 
     private:
@@ -12,7 +9,6 @@ class BankAccount {
     double accountBalance;
     string customerName;
     BankAccount* next;
-
 
     public:
       friend void printMenu();
@@ -34,8 +30,15 @@ class BankAccount {
         this->next = next;
       }
 
+      int getAccountNumber() { 
+        return accountNumber; }
+      
+      double getAccountBalance() {
+        return accountBalance; }
+      
+      string getCustomerName() {
+        return customerName; }
 };
-
 
 class Bank {
      private:
@@ -92,16 +95,41 @@ class Bank {
 
         cout << "===========================================\n";
      }
+
+        BankAccount* searchAccount (int accountNumber) {
+          BankAccount* current = head;
+          while (current != nullptr) {
+            if (current-> accountNumber == accountNumber)
+              return current;
+              current = current->getNext();
+          }
+          return nullptr;
+        }
+
+     void deposit (int accountNumber, double amount) {
+      BankAccount* account = searchAccount (accountNumber);
+      if (!account) {
+        cout << "Account not found!" << endl;
+        return;
+      }
+      account->accountBalance += amount;
+      cout << "Deposit successful! New balance: " << account -> accountBalance << endl;
+     }
+    
+     void withdraw (int accountNumber, double amount) { 
+      BankAccount* account = searchAccount (accountNumber);
+      if (!account) {
+        cout << "Account not found!" << endl;
+        return;
+      }
+      if (amount > account -> accountBalance) {
+        cout << "Balance Insufficient! " << endl;
+        return;
+      }
+      account -> accountBalance -= amount;
+      cout << "Withdrawal successful! New Balance: " << account -> accountBalance << endl;
+     }
 };
-
-
-
-
-
-
-
-
-
 
 int main(){
     Bank bank;
@@ -137,8 +165,42 @@ int main(){
           cin >> amount;
           bank.addAccount(accNum , amount , name);
           break;
+
         case 2:
           bank.displayAccount();
+          break;
+
+        case 3:
+          cout << "Enter account number: " << endl;
+          cin >> accNum;
+          cout << "Enter deposit amount: " << endl;
+          cin >> amount;
+          bank.deposit (accNum, amount);
+          break;
+
+        case 4: 
+          cout << "Enter account number: " << endl;
+          cin >> accNum;
+          cout << "Enter withdraw amount: " << endl;
+          cin >> amount;
+          bank.withdraw (accNum, amount);
+          break;
+
+        case 5:
+          cout << "Enter account number to search: " << endl;
+          cin >> accNum;
+          {
+            BankAccount* account = bank.searchAccount (accNum);
+            if (account) {
+              cout << "Account Found!" << endl;
+              cout << "Account Number: " << account -> getAccountNumber()  << endl;
+              cout << "Customer Name: " << account -> getCustomerName() << endl;
+              cout << "Account Balance: " << account -> getAccountBalance() << endl;
+            } 
+            else {
+              cout << "Account not Found!" << endl;
+            }
+          }
           break;
     }
     } while (choice != 7);
