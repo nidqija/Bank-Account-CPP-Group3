@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <limits>
 #include <stdexcept>
 using namespace std;
 
@@ -227,6 +228,13 @@ int main() {
     cout << "Your choice: ";
     cin >> choice;
 
+    if (cin.fail()) {
+    cin.clear(); // reset fail state
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // flush bad input
+    cout << "Invalid input! Please enter a valid number." << endl;
+    continue; // restart loop
+}
+
     switch (choice)
     {
     case 1:
@@ -236,6 +244,18 @@ int main() {
         string itemName;
         cout << "Enter the item to add: ";
         cin >> itemName;
+        bool isNumber = true;
+for (char c : itemName) {
+    if (!isdigit(c)) {
+        isNumber = false;
+        break;
+    }
+}
+
+if (isNumber) {
+    cout << "Invalid input! Item name cannot be a number." << endl;
+    break; // exit case 1 without adding
+}
         Product p(itemName);
         if(stack.push(p)){
           cout << "Done! Item \"" << itemName << "\" is added to incoming items!" << endl;
