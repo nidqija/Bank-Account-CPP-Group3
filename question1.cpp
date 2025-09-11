@@ -240,25 +240,7 @@ int main(){
     break;
 }
 
-        case 2:
-          bank.displayAccount();
-          break;
-
-        case 3:
-          cout << "Enter account number: " << endl;
-          cin >> accNum;
-          cout << "Enter deposit amount: " << endl;
-          cin >> amount;
-          bank.deposit (accNum, amount);
-          break;
-
-        case 4: 
-          cout << "Enter account number: " << endl;
-          cin >> accNum;
-          cout << "Enter withdraw amount: " << endl;
-          cin >> amount;
-          bank.withdraw (accNum, amount);
-          break;
+      
         case 2:
           bank.displayAccount();
           break;
