@@ -1,10 +1,8 @@
 #include <iostream>
 #include <string>
-
+#include <limits>
 
 using namespace std;
-
-
 class BankAccount {
 
     private:
@@ -12,7 +10,6 @@ class BankAccount {
     double accountBalance;
     string customerName;
     BankAccount* next;
-
 
     public:
       friend void printMenu();
@@ -34,8 +31,15 @@ class BankAccount {
         this->next = next;
       }
 
+      int getAccountNumber() { 
+        return accountNumber; }
+      
+      double getAccountBalance() {
+        return accountBalance; }
+      
+      string getCustomerName() {
+        return customerName; }
 };
-
 
 class Bank {
      private:
@@ -92,16 +96,41 @@ class Bank {
 
         cout << "===========================================\n";
      }
+
+        BankAccount* searchAccount (int accountNumber) {
+          BankAccount* current = head;
+          while (current != nullptr) {
+            if (current-> accountNumber == accountNumber)
+              return current;
+              current = current->getNext();
+          }
+          return nullptr;
+        }
+
+     void deposit (int accountNumber, double amount) {
+      BankAccount* account = searchAccount (accountNumber);
+      if (!account) {
+        cout << "Account not found!" << endl;
+        return;
+      }
+      account->accountBalance += amount;
+      cout << "Deposit successful! New balance: " << account -> accountBalance << endl;
+     }
+    
+     void withdraw (int accountNumber, double amount) { 
+      BankAccount* account = searchAccount (accountNumber);
+      if (!account) {
+        cout << "Account not found!" << endl;
+        return;
+      }
+      if (amount > account -> accountBalance) {
+        cout << "Balance Insufficient! " << endl;
+        return;
+      }
+      account -> accountBalance -= amount;
+      cout << "Withdrawal successful! New Balance: " << account -> accountBalance << endl;
+     }
 };
-
-
-
-
-
-
-
-
-
 
 int main(){
     Bank bank;
@@ -126,19 +155,126 @@ int main(){
     string name;
     double amount;
 
+      if (cin.fail() || choice < 1 || choice > 7) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid choice! Enter a number between 1 and 7." << endl;
+                continue;
+            }
     switch(choice){
-        case 1:
-          cout << "Enter account number: " << endl;
-          cin >> accNum;
-          cin.ignore();
-          cout << "Enter customer name: " << endl;
-          getline(cin , name);
-          cout << "Enter initial balance: " << endl;
-          cin >> amount;
-          bank.addAccount(accNum , amount , name);
-          break;
+        case 1:{
+    
+    while (true) {
+        cout << "Enter account number: ";
+        cin >> accNum;
+
+        if (cin.fail() || accNum <= 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid account number! Must be a positive integer." << endl;
+            continue;
+        }
+
+        if (bank.searchAccount(accNum) != nullptr) {
+            cout << "Account number already exists! Try again." << endl;
+            continue;
+        }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+        break; 
+    }
+
+  
+    while (true) {
+        cout << "Enter customer name: ";
+        getline(cin, name);
+
+        bool isValid = true;
+        if (name.empty()) {
+            cout << "Customer name cannot be empty!" << endl;
+            continue;
+        } 
+
+        for (char c : name) {
+           if(isdigit(c)){
+            isValid = false;
+            break;
+           }
+        }
+
+        if(!isValid){
+          cout << "Customer name cannot contain numbers!" << endl;
+          continue;
+        }
+        break;
+    }
+
+   
+    while (true) {
+        cout << "Enter initial balance: ";
+        cin >> amount;
+        if (cin.fail() || amount < 0) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Initial balance cannot be negative!" << endl;
+            continue;
+        }
+
+        bool isValid = true;
+
+        for (char c : to_string(amount)){
+          if(isalpha(c)){
+             isValid = false;
+             break;
+          }
+        }
+
+        if(!isValid){
+          cout << "Initial balance must be a valid number!" << endl;
+          continue;
+        }
+        break;
+    }
+
+    bank.addAccount(accNum, amount, name);
+    break;
+}
+
         case 2:
           bank.displayAccount();
+          break;
+
+        case 3:
+          cout << "Enter account number: " << endl;
+          cin >> accNum;
+          cout << "Enter deposit amount: " << endl;
+          cin >> amount;
+          bank.deposit (accNum, amount);
+          break;
+
+        case 4: 
+          cout << "Enter account number: " << endl;
+          cin >> accNum;
+          cout << "Enter withdraw amount: " << endl;
+          cin >> amount;
+          bank.withdraw (accNum, amount);
+          break;
+
+        case 5:
+          cout << "Enter account number to search: " << endl;
+          cin >> accNum;
+          {
+            BankAccount* account = bank.searchAccount (accNum);
+            if (account) {
+              cout << "Account Found!" << endl;
+              cout << "Account Number: " << account -> getAccountNumber()  << endl;
+              cout << "Customer Name: " << account -> getCustomerName() << endl;
+              cout << "Account Balance: " << account -> getAccountBalance() << endl;
+            } 
+            else {
+              cout << "Account not Found!" << endl;
+            }
+          }
           break;
     }
     } while (choice != 7);
