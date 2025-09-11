@@ -239,31 +239,68 @@ int main(){
     bank.addAccount(accNum, amount, name);
     break;
 }
-
-      
         case 2:
           bank.displayAccount();
           break;
 
         case 3:
-          cout << "Enter account number: " << endl;
-          cin >> accNum;
+          while (true) {
+            cout << "Enter account number: ";
+            cin >> accNum;
+
+          if (cin.fail() || accNum <= 0) {
+            cin.clear();
+
+            cin.ignore (numeric_limits < streamsize > :: max (), '\n' );
+            cout << "Invalid account number! Must be a positive integer." << endl;
+            continue;
+          }
+
+            cin.ignore (numeric_limits < streamsize > :: max (), '\n');
+            break;
+          }
+          
           cout << "Enter deposit amount: " << endl;
           cin >> amount;
           bank.deposit (accNum, amount);
           break;
 
         case 4: 
+        while (true) {
           cout << "Enter account number: " << endl;
           cin >> accNum;
+
+          if (cin.fail() || accNum <= 0) {} {
+            cin.clear ();
+
+            cin.ignore (numeric_limits < streamsize > :: max (), '\n' );
+            cout << "Invalid account number! Must be a positive integer." << endl;
+            continue;
+          }
+
+           cin.ignore (numeric_limits < streamsize > :: max (), '\n');
+           break;
+        }
           cout << "Enter withdraw amount: " << endl;
           cin >> amount;
           bank.withdraw (accNum, amount);
           break;
 
         case 5:
+        while (true) {
           cout << "Enter account number to search: " << endl;
           cin >> accNum;
+
+          if (cin.fail() || accNum <= 0) {
+            cin.clear ();
+
+            cin.ignore (numeric_limits < streamsize > :: max (), '/n');
+            cout << "Invalid account number! Must be a positive integer." << endl;
+            continue;
+          } 
+            cin.ignore (numeric_limits < streamsize > :: max (), '/n');
+            break;
+        }
           {
             BankAccount* account = bank.searchAccount (accNum);
             if (account) {
@@ -279,8 +316,6 @@ int main(){
           break;
     }
     } while (choice != 7);
-
-   
     
     return 0;
 }
